@@ -1,0 +1,21 @@
+{
+  "name": "ooh",
+  "version": "0.0.1",
+  "description": "Occupational Outlook Handbook 2.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "whybin",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.15.5",
+    "pug": "^2.0.0-rc.4"
+  },
+  "devDependencies": {
+    "eslint": "^4.7.2",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0"
+  }
+}
