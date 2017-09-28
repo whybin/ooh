@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "express": "^4.15.5",
+    "lodash": "^4.17.4",
     "pug": "^2.0.0-rc.4"
   },
   "devDependencies": {
