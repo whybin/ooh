@@ -19,13 +19,19 @@ body {
     position: absolute;
 
     .label {
+        width: 150px;
+
         background: black;
         color: $blueColor;
+        opacity: 0.75;
+
         font-family: 'Seravek', sans-serif;
+        font-size: 13px;
 
         padding: 4px 7px;
 
         position: absolute;
+        pointer-events: none;
     }
 }
 
