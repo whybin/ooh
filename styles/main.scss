@@ -19,11 +19,11 @@ body {
     cursor: move;
 }
 
-.map-piece {
-    position: relative;
-    z-index: -1;
-}
-
 #start-hub {
     fill: $darkerBlue;
+}
+
+.path {
+    stroke: $darkerBlue;
+    stroke-width: 6;
 }

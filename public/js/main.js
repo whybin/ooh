@@ -1,9 +1,21 @@
 (function (window, document) {
     window.addEventListener('load', function () {
-        const canvas = SVG('canvas');
-        const map    = new Map(canvas).generate();
-        const avatar = new Avatar(canvas).create(percentToPixel(5, 'y'), '#EC4865');
-        map.user     = avatar;
+        const poi = [
+            { name: 'Architecture and Engineering' },
+            { name: 'Arts and Design' },
+            { name: 'Building and Grounds Cleaning' },
+            { name: 'Business and Financial' },
+            { name: 'Community and Social Service' },
+            { name: 'Computer and Information Technology' },
+            { name: 'Construction and Extraction' },
+        ];
+
+        const canvasElem = document.querySelector('#canvas');
+        const canvas     = SVG('canvas');
+        const map        = new Map(canvas, canvasElem).generate(poi);
+        const avatar     = new Avatar(canvas)
+            .create(percentToPixel(5, 'y'), '#EC4865');
+        map.user         = avatar;
     });
 
     // Utils {{{
@@ -39,12 +51,27 @@
                 throw new ReferenceError('No coord: ' + coord);
         };
     };
+
+    /**
+     * Generate pseudo-random number within a range.
+     * @param {number} from
+     * @param {number} to
+     */
+    const randomRange = function (from, to) {
+        return Math.random() * (to - from) + from;
+    };
+
+    const diff = function (a, b) {
+        let ret = a - b;
+        return ret >= 0 ? ret : -ret;
+    };
     // }}}
 
     /**
-     * Circle object with boundaries.
+     * Shape with boundaries.
+     * @class
      */
-    class BoundCircle {
+    class BoundedShape {
         // {{{
         /**
          * @constructor
@@ -57,7 +84,15 @@
         get elem() {
             return this._elem;
         }
+    }
+    // }}}
 
+    /**
+     * Circle object with boundaries.
+     * @class
+     */
+    class BoundCircle extends BoundedShape {
+        // {{{
         get cx() {
             return this._cx;
         }
@@ -108,6 +143,80 @@
         }
     }
     // }}}
+
+    /**
+     * Line with boundaries.
+     * @class
+     */
+    class BoundLine extends BoundedShape {
+        /**
+         * @constructor
+         * @param {HTMLElement} elem
+         * @param {string} direction - 'horizontal' or 'vertical'
+         */
+        constructor(elem, direction) {
+            super(elem);
+            this._direction = direction;
+        }
+
+        /**
+         * Recalculate relevant attributes.
+         */
+        refreshAttr() {
+            this._x1 = parseInt(this._elem.getAttribute('x1'));
+            this._y1 = parseInt(this._elem.getAttribute('y1'));
+
+            switch (this._direction) {
+                case 'horizontal':
+                    this._x2 = parseInt(this._elem.getAttribute('x2'));
+                    this._y2 = this._y1;
+                    break;
+                case 'vertical':
+                    this._y2 = parseInt(this._elem.getAttribute('y2'));
+                    this._x2 = this._x1;
+                    break;
+            }
+        }
+
+        in(x, y) {
+            x = parseInt(x);
+            y = parseInt(y);
+            this.refreshAttr();
+
+            const threshold = 9;
+            switch (this._direction) {
+                case 'horizontal':
+                    console.log(y, this._y1);
+                    if (diff(y, this._y1) > threshold) {
+                        return false;
+                    }
+
+                    if (x === this._x1) {
+                        return true;
+                    } else if (x > this._x1) {
+                        return this._x2 >= x;
+                    } else {
+                        return this._x2 <= x;
+                    }
+                    break;
+                case 'vertical':
+                    if (diff(x, this._x1) > threshold) {
+                        return false;
+                    }
+
+                    if (y === this._y1) {
+                        return true;
+                    } else if (y > this._y1) {
+                        return this._y2 >= y;
+                    } else {
+                        return this._y2 <= y;
+                    }
+                    break;
+            }
+
+            return false;
+        }
+    }
 
     /**
      * Snappable element.
@@ -227,12 +336,17 @@
     class Map {
         /**
          * @constructor
+         * @param {SVG} canvas
          * @param {HTMLElement} canvasElem
          */
-        constructor(canvas) {
-            this._canvas    = canvas;
+        constructor(canvas, canvasElem) {
+            this._canvas   = canvas;
+            this._elem     = canvasElem;
             this._startHub = null;
             this._user     = null;
+            this._centerX  = percentToPixel(50, 'x');
+            this._centerY  = percentToPixel(50, 'y');
+            this._lines    = [];
         }
 
         /**
@@ -248,11 +362,23 @@
                 }).animate({
                     'duration': 600, 'ease': '<>'
                 }).attr({
-                    'cx': percentToPixel(50, 'x'), 'cy': percentToPixel(50, 'y')
+                    'cx': this._centerX, 'cy': this._centerY
                 });
 
                 this._user.addSnapZone(this._startHub);
             }
+
+            this._lines.forEach(line => {
+                this._user.addSnapZone(line);
+            });
+        }
+
+        get width() {
+            return this._elem.getBoundingClientRect().width;
+        }
+
+        get height() {
+            return this._elem.getBoundingClientRect().height;
         }
 
         /**
@@ -266,18 +392,28 @@
          */
         generate(poi) {
             const circle   = this._canvas.circle(percentToPixel(10, 'y')).attr({
-                'cx': percentToPixel(50, 'x'),
-                'cy': percentToPixel(50, 'y'),
+                'cx': this._centerX,
+                'cy': this._centerY,
                 'id': 'start-hub'
             }).addClass('map-piece');
 
             this._startHub = new BoundCircle(circle.node);
+            this._startHub.refreshAttr();
 
             if (!poi || !poi.length) {
                 return this._finishGenerate();
             }
 
+            const padding = percentToPixel(5, 'y');
             poi.forEach(point => {
+                let endpointX, endpointY;
+                do {
+                    endpointX = randomRange(padding, this.width - padding);
+                    endpointY = randomRange(padding, this.height - padding);
+                } while (endpointX === this._startHub.cx
+                    && endpointY === this._startHub.cy);
+
+                this._generatePathTo(endpointX, endpointY);
             });
 
             return this._finishGenerate();
@@ -296,6 +432,49 @@
             // this._startHub.node.dispatchEvent(mapgenEvent);
 
             return this;
+        }
+
+        /**
+         * Creates path leading to specified coordinates.
+         * @param {number} x
+         * @param {number} y
+         */
+        _generatePathTo(x, y) {
+            let currentX  = this._startHub.cx;
+            let currentY  = this._startHub.cy;
+            let direction = !!Math.round(Math.random());
+            let closeness = 0;
+            let line;
+
+            do {
+                if (direction) {
+                    let newX = randomRange(
+                        closeness * x, this.width - closeness * (this.width - x));
+                    line = this._canvas.line(currentX, currentY, newX, currentY);
+                    currentX = newX;
+                } else {
+                    let newY = randomRange(
+                        closeness * y, this.height - closeness * (this.height - y));
+
+                    line = this._canvas.line(currentX, currentY, currentX, newY);
+                    currentY = newY;
+                }
+
+                line.addClass('path');
+                const boundLine = new BoundLine(
+                    line.node, direction ? 'horizontal' : 'vertical');
+                this._lines.push(boundLine);
+
+                direction = !direction;
+                closeness += Math.random();
+                if (closeness > 1) {
+                    closeness = 1;
+                }
+            } while (currentX !== x || currentY !== y);
+
+            this._canvas.circle(percentToPixel(3, 'y')).addClass('poi').attr({
+                'cx': x, 'cy': y
+            });
         }
     }
 })(this, document);
