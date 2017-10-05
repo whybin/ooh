@@ -10,9 +10,23 @@ body {
     background: $blueColor;
 }
 
-#content-wrapper, #content, #canvas {
+#content-wrapper, #content, #overlay, #canvas {
     height: 100%;
     margin: auto;
+}
+
+#overlay {
+    position: absolute;
+
+    .label {
+        background: black;
+        color: $blueColor;
+        font-family: 'Seravek', sans-serif;
+
+        padding: 4px 7px;
+
+        position: absolute;
+    }
 }
 
 .draggable {

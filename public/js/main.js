@@ -67,6 +67,19 @@
     };
     // }}}
 
+    const addLabel = function (name, x, y) {
+        x -= 10;
+        y += 20;
+
+        const label = document.createElement('div');
+        label.setAttribute('class', 'label');
+        label.setAttribute('style', `left: ${x}px; top: ${y}px;`);
+        label.innerText = name;
+
+        const overlayElem = document.querySelector('#overlay');
+        overlayElem.appendChild(label);
+    };
+
     /**
      * Shape with boundaries.
      * @class
@@ -149,6 +162,7 @@
      * @class
      */
     class BoundLine extends BoundedShape {
+        // {{{
         /**
          * @constructor
          * @param {HTMLElement} elem
@@ -157,6 +171,7 @@
         constructor(elem, direction) {
             super(elem);
             this._direction = direction;
+            this.refreshAttr();
         }
 
         /**
@@ -217,6 +232,7 @@
             return false;
         }
     }
+    // }}}
 
     /**
      * Snappable element.
@@ -334,6 +350,7 @@
      * @class
      */
     class Map {
+        // {{{
         /**
          * @constructor
          * @param {SVG} canvas
@@ -413,7 +430,7 @@
                 } while (endpointX === this._startHub.cx
                     && endpointY === this._startHub.cy);
 
-                this._generatePathTo(endpointX, endpointY);
+                this._generatePathTo(point.name, endpointX, endpointY);
             });
 
             return this._finishGenerate();
@@ -436,10 +453,11 @@
 
         /**
          * Creates path leading to specified coordinates.
+         * @param {string} name
          * @param {number} x
          * @param {number} y
          */
-        _generatePathTo(x, y) {
+        _generatePathTo(name, x, y) {
             let currentX  = this._startHub.cx;
             let currentY  = this._startHub.cy;
             let direction = !!Math.round(Math.random());
@@ -475,6 +493,8 @@
             this._canvas.circle(percentToPixel(3, 'y')).addClass('poi').attr({
                 'cx': x, 'cy': y
             });
+            addLabel(name, x, y);
         }
     }
+    // }}}
 })(this, document);
