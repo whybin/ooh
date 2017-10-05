@@ -1,14 +1,8 @@
 (function (window, document) {
-    window.NUMBER_SUFFIX = '%';    // All number values in percentage
-
     window.addEventListener('load', function () {
-        const canvasElem = document.querySelector('#canvas');
-        canvasElem.setAttribute('style',
-            'width: ' + canvasElem.getBoundingClientRect().height + 'px');
-
         const canvas = SVG('canvas');
         const map    = new Map(canvas).generate();
-        const avatar = new Avatar(canvas).create('5%', '#EC4865');
+        const avatar = new Avatar(canvas).create(percentToPixel(5, 'y'), '#EC4865');
         map.user     = avatar;
     });
 
@@ -28,39 +22,24 @@
     };
 
     /**
-     * Returns calculation of value relative to current viewport size.
-     * @param {number|string} value
+     * Converts percentage to pixel value relative to current window size.
+     * @param {string|number} percent
      * @param {string} coord - Which coordinate value represents
      * @returns {number}
      * @throws {ReferenceError}
      */
-    const calcPercentCanvas = function (value, coord) {
-        value = parseFloat(value);
+    const percentToPixel = function (percent, coord) {
+        percent = parseFloat(percent);
         switch (coord) {
             case 'x':
-                return value / window.innerWidth * 100;
+                return percent * window.innerWidth / 100;
             case 'y':
-                return value / window.innerHeight * 100;
+                return percent * window.innerHeight / 100;
             default:
                 throw new ReferenceError('No coord: ' + coord);
         };
     };
     // }}}
-
-    const onMove = function (e) {
-        const setCenterAsPercent = function (coord) {
-            const c = e.target.getAttribute('c' + coord);
-            let percent = c.slice(-1) === '%'
-                ? c.slice(0, -1)
-                : calcPercentCanvas(c, coord);
-            percent = parseFloat(percent);
-            percent += calcPercentCanvas(e['d' + coord], coord);
-            e.target.setAttribute('c' + coord, percent + '%');
-        };
-
-        setCenterAsPercent('x');
-        setCenterAsPercent('y');
-    };
 
     /**
      * Circle object with boundaries.
@@ -124,8 +103,8 @@
          * @param {number} y
          */
         moveTo(x, y) {
-            this._elem.setAttribute('cx', x + window.NUMBER_SUFFIX);
-            this._elem.setAttribute('cy', y + window.NUMBER_SUFFIX);
+            this._elem.setAttribute('cx', x);
+            this._elem.setAttribute('cy', y);
         }
     }
     // }}}
@@ -233,9 +212,7 @@
 
             this._svg.draggable().on('dragmove', e => {
                 e.preventDefault();
-                this.moveTo(
-                    calcPercentCanvas(e.detail.p.x, 'x'),
-                    calcPercentCanvas(e.detail.p.y, 'y'));
+                this.moveTo(e.detail.p.x, e.detail.p.y);
             });
 
             return this;
@@ -267,11 +244,11 @@
 
             if (this._startHub) {
                 this._user.svg.attr({
-                    'cx': '0%', 'cy': '0%'
+                    'cx': '0', 'cy': '0'
                 }).animate({
                     'duration': 600, 'ease': '<>'
                 }).attr({
-                    'cx': '50%', 'cy': '50%'
+                    'cx': percentToPixel(50, 'x'), 'cy': percentToPixel(50, 'y')
                 });
 
                 this._user.addSnapZone(this._startHub);
@@ -288,8 +265,12 @@
          * @returns {Map}
          */
         generate(poi) {
-            const circle   = this._canvas.circle('10%').cx('50%').cy('50%')
-                .attr('id', 'start-hub').addClass('map-piece');
+            const circle   = this._canvas.circle(percentToPixel(10, 'y')).attr({
+                'cx': percentToPixel(50, 'x'),
+                'cy': percentToPixel(50, 'y'),
+                'id': 'start-hub'
+            }).addClass('map-piece');
+
             this._startHub = new BoundCircle(circle.node);
 
             if (!poi || !poi.length) {
