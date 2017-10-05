@@ -1,0 +1,29 @@
+$blueColor: #1f6de3;
+$darkerBlue: #2951c5;
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: $blueColor;
+}
+
+#content-wrapper, #content, #canvas {
+    height: 100%;
+    margin: auto;
+}
+
+.draggable {
+    cursor: move;
+}
+
+.map-piece {
+    position: relative;
+    z-index: -1;
+}
+
+#start-hub {
+    fill: $darkerBlue;
+}
