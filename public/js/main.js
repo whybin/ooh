@@ -201,7 +201,6 @@
             const threshold = 9;
             switch (this._direction) {
                 case 'horizontal':
-                    console.log(y, this._y1);
                     if (diff(y, this._y1) > threshold) {
                         return false;
                     }
