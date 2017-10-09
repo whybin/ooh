@@ -4,3 +4,6 @@
 
 node_modules/
 public/css/
+public/js/data/
+
+raw_data
