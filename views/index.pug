@@ -1,0 +1,18 @@
+extends templates/master.pug
+
+block head-scripts
+    script(type='text/javascript' src='js/Chart.min.js')
+
+block content
+    #island-wrapper
+        canvas#graph
+        #search-container
+            h2#search-instruct
+                | Start
+                |
+                strong searching
+                |
+                | career options
+            form#search
+                input(type='text' placeholder='Type keywords here')
+        script(type='text/javascript' src='js/main.js')
