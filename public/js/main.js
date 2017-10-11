@@ -23,16 +23,38 @@
     };
     // }}}
 
-    const drawBrowseGraphs = function () {
+    /**
+     * Format dataset for chart.js
+     * @param {object[]} datasets - Mutable array
+     * @param {string} id - Y axis ID
+     * @param {number[]} data
+     * @param {string} color
+     */
+    const addDataset = function (datasets, id, data, color) {
         // {{{
-        const canvasElem = document.querySelector('#graph');
-        const ctx = canvasElem.getContext('2d');
+        datasets.push({
+            yAxisID: id,
+            data: data,
+            borderColor: color,
+            borderWidth: 1,
+            pointBackgroundColor: color,
+            pointBorderWidth: 0,
+            fill: false
+        });
+    };
+    // }}}
 
-        // Populate data arrays
-        let labels = [];
+    /**
+     * Populate labels and dataset arrays.
+     * @param {object[]} dataSource
+     * @param {string[]} labels - Mutable
+     * @param {object[]} datasets - Mutable
+     */
+    const populateData = function (dataSource, labels, datasets) {
+        // {{{
         let perYearData = [], totalJobsData = [], jobGrowthData = [];
         const WORK_HOURS_PER_YEAR = 2080;
-        window.DB.occupations().each(occ => {
+        dataSource.forEach(occ => {
             labels.push(occ.name);
 
             // Get pay per year or estimate from per-hour value
@@ -46,22 +68,23 @@
             jobGrowthData.push(occ.job_growth);
         });
 
-        const datasets = [];
-        const addDataset = function (datasets, id, data, color) {
-            datasets.push({
-                yAxisID: id,
-                data: data,
-                borderColor: color,
-                borderWidth: 1,
-                pointBackgroundColor: color,
-                pointBorderWidth: 0,
-                fill: false
-            });
-        };
-
         addDataset(datasets, 'perYearAxis', perYearData, '#5ed7a3');
         addDataset(datasets, 'totalJobsAxis', totalJobsData, '#e96073');
         addDataset(datasets, 'jobGrowthAxis', jobGrowthData, '#f08226');
+    };
+    // }}}
+
+    /**
+     * Initial draw execution of graphs.
+     * @returns {Chart}
+     */
+    const drawBrowseGraphs = function () {
+        // {{{
+        const canvasElem = document.querySelector('#graph');
+        const ctx = canvasElem.getContext('2d');
+
+        let labels = [], datasets = [];
+        populateData(window.DB.occupations().get(), labels, datasets);
 
         const graphs = new Chart(ctx, {
             type: 'line',
