@@ -1,8 +1,7 @@
 (function (window, document) {
     const drawBrowseGraphs = function () {
-        const ctx = document.getElementById('graph').getContext('2d');
-        let labels = [];
-        let data = [];
+        const canvasElem = document.querySelector('#graph');
+        const ctx = canvasElem.getContext('2d');
 
         // Populate data arrays
         let labels = [], perYearData = [], totalJobsData = [];
