@@ -35,7 +35,7 @@
         };
 
         addDataset(datasets, 'perYearAxis', perYearData, '#5ed7a3');
-        addDataset(datasets, 'totalJobsAxis', totalJobsData, '#dde3ef');
+        addDataset(datasets, 'totalJobsAxis', totalJobsData, '#e96073');
         addDataset(datasets, 'jobGrowthAxis', jobGrowthData, '#f08226');
 
         const graphs = new Chart(ctx, {
@@ -77,10 +77,10 @@
                                 case 0:
                                     return ' ' + item.yLabel.toLocaleString('en-US', {
                                         style: 'currency', currency: 'usd'
-                                    }) + ' yearly median pay';
+                                    }) + ' yearly pay';
                                 case 1:
                                     return ' ' + item.yLabel.toLocaleString()
-                                        + ' jobs, 2014';
+                                        + ' jobs';
                                 case 2:
                                     return ' ' + item.yLabel.toLocaleString()
                                         + '% (job '
