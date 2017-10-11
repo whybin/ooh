@@ -86,7 +86,7 @@
         let labels = [], datasets = [];
         populateData(window.DB.occupations().get(), labels, datasets);
 
-        const graphs = new Chart(ctx, {
+        return new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -159,7 +159,7 @@
     };
     // }}}
 
-    const setupEventListeners = function () {
+    const setupEventListeners = function (graphs) {
         // {{{
         const fuse = new Fuse(window.DB.occupations().get(), {
             shouldSort: true,
@@ -180,8 +180,14 @@
                 return;
             }
 
-            console.log(fuse.search(value));
-        }, 300));
+            const searchResults = fuse.search(value);
+            const labels = [], datasets = [];
+            populateData(searchResults, labels, datasets);
+
+            graphs.data.labels = labels;
+            graphs.data.datasets = datasets;
+            graphs.update();
+        }, 600));
     };
     // }}}
 
@@ -191,7 +197,7 @@
             window.DB.occupations = TAFFY(window.DATA.occupations);
         }
 
-        drawBrowseGraphs();
-        setupEventListeners();
+        const graphs = drawBrowseGraphs();
+        setupEventListeners(graphs);
     });
 })(this, document);
