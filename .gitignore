@@ -5,5 +5,6 @@
 node_modules/
 public/css/
 public/js/data/
+public/js/lib/
 
 raw_data
