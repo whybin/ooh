@@ -4,35 +4,61 @@
         let labels = [];
         let data = [];
 
+        // Populate data arrays
+        let labels = [], perYearData = [], totalJobsData = [];
         window.DB.occupations().each(occ => {
             labels.push(occ.name);
-            data.push(occ.pay_per_year);
+            perYearData.push(occ.pay_per_year);
+            totalJobsData.push(occ.total_jobs);
         });
 
-        var myChart = new Chart(ctx, {
+        const datasets = [];
+        const addDataset = function (datasets, id, data, color) {
+            datasets.push({
+                yAxisID: id,
+                data: data,
+                borderColor: color,
+                borderWidth: 1,
+                pointBackgroundColor: color,
+                pointBorderWidth: 0,
+                fill: false
+            });
+        };
+
+        addDataset(datasets, 'perYearAxis', perYearData, '#5ed7a3');
+        addDataset(datasets, 'totalJobsAxis', totalJobsData, '#dde3ef');
+
+        const graphs = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{
-                    data: data,
-                    borderColor: '#5ed7a3',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#5ed7a3',
-                    pointBorderWidth: 0,
-                    fill: false
-                }]
+                datasets: datasets
             },
             options: {
                 scales: {
                     xAxes: [{ display: false }],
-                    yAxes: [{ display: false }]
+                    yAxes: [{
+                        id: 'perYearAxis',
+                        display: false
+                    }, {
+                        id: 'totalJobsAxis',
+                        display: false
+                    }]
                 },
                 legend: { display: false },
                 tooltips: {
                     callbacks: {
-                        label: item => ' ' + item.yLabel.toLocaleString('en-US', {
-                            style: 'currency', currency: 'usd'
-                        }) + ' yearly median pay'
+                        label: item => {
+                            switch (item.datasetIndex) {
+                                case 0:
+                                    return ' ' + item.yLabel.toLocaleString('en-US', {
+                                        style: 'currency', currency: 'usd'
+                                    }) + ' yearly median pay';
+                                case 1:
+                                    return ' ' + item.yLabel.toLocaleString()
+                                        + ' jobs, 2014';
+                            }
+                        }
                     }
                 }
             }
