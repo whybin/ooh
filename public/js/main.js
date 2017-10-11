@@ -6,9 +6,17 @@
         // Populate data arrays
         let labels = [];
         let perYearData = [], totalJobsData = [], jobGrowthData = [];
+        const WORK_HOURS_PER_YEAR = 2080;
         window.DB.occupations().each(occ => {
             labels.push(occ.name);
-            perYearData.push(occ.pay_per_year);
+
+            // Get pay per year or estimate from per-hour value
+            let payPerYear = occ.pay_per_year;
+            if (payPerYear == null) {
+                payPerYear = occ.pay_per_hour * WORK_HOURS_PER_YEAR;
+            }
+
+            perYearData.push(payPerYear);
             totalJobsData.push(occ.total_jobs);
             jobGrowthData.push(occ.job_growth);
         });
