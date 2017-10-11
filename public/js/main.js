@@ -89,6 +89,22 @@
                             }
                         }
                     }
+                },
+                onHover: (e, active) => {
+                    let classes = canvasElem.getAttribute('class');
+
+                    classes = active.length
+                        ? classes + ' clickable'
+                        : classes.replace(/ clickable/g, '');
+                    canvasElem.setAttribute('class', classes);
+                },
+                onClick: (e, active) => {
+                    if (!active.length) {
+                        return;
+                    }
+                    
+                    let id = active[0]._index;
+                    window.location.pathname = '/occupations/' + id;
                 }
             }
         });
