@@ -4,11 +4,13 @@
         const ctx = canvasElem.getContext('2d');
 
         // Populate data arrays
-        let labels = [], perYearData = [], totalJobsData = [];
+        let labels = [];
+        let perYearData = [], totalJobsData = [], jobGrowthData = [];
         window.DB.occupations().each(occ => {
             labels.push(occ.name);
             perYearData.push(occ.pay_per_year);
             totalJobsData.push(occ.total_jobs);
+            jobGrowthData.push(occ.job_growth);
         });
 
         const datasets = [];
@@ -26,6 +28,7 @@
 
         addDataset(datasets, 'perYearAxis', perYearData, '#5ed7a3');
         addDataset(datasets, 'totalJobsAxis', totalJobsData, '#dde3ef');
+        addDataset(datasets, 'jobGrowthAxis', jobGrowthData, '#f08226');
 
         const graphs = new Chart(ctx, {
             type: 'line',
@@ -41,6 +44,9 @@
                         display: false
                     }, {
                         id: 'totalJobsAxis',
+                        display: false
+                    }, {
+                        id: 'jobGrowthAxis',
                         display: false
                     }]
                 },
@@ -67,6 +73,11 @@
                                 case 1:
                                     return ' ' + item.yLabel.toLocaleString()
                                         + ' jobs, 2014';
+                                case 2:
+                                    return ' ' + item.yLabel.toLocaleString()
+                                        + '% (job '
+                                        + (item.yLabel >= 0 ? 'growth' : 'decline')
+                                        + ')';
                             }
                         }
                     }
