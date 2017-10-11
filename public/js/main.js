@@ -164,8 +164,8 @@
         const fuse = new Fuse(window.DB.occupations().get(), {
             shouldSort: true,
             location: 0,
-            distance: 5,
-            threshold: 0.7,
+            distance: 4,
+            threshold: 0.5,
             maxPatternLength: 32,
             keys: [
                 { name: 'name', weight: 0.75 },
