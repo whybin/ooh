@@ -1,4 +1,28 @@
 (function (window, document) {
+    /**
+     * Returns throttled input function.
+     * @param {Function} func
+     * @param {number} [delay=1000] - Delay in milliseconds
+     * @returns {Function}
+     */
+    const throttle = function (func, delay = 1000) {
+        // {{{
+        let timeout = null;
+
+        return function () {
+            if (timeout !== null) {
+                return;
+            }
+
+            let args = arguments;
+            timeout = window.setTimeout(() => {
+                timeout = null;
+                func(...args);
+            }, delay);
+        };
+    };
+    // }}}
+
     const drawBrowseGraphs = function () {
         const canvasElem = document.querySelector('#graph');
         const ctx = canvasElem.getContext('2d');
