@@ -24,6 +24,7 @@
     // }}}
 
     const drawBrowseGraphs = function () {
+        // {{{
         const canvasElem = document.querySelector('#graph');
         const ctx = canvasElem.getContext('2d');
 
@@ -133,6 +134,7 @@
             }
         });
     };
+    // }}}
 
     const setupEventListeners = function () {
         // {{{
