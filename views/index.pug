@@ -2,6 +2,7 @@ extends templates/master.pug
 
 block head-scripts
     script(type='text/javascript' src='js/Chart.min.js')
+    script(type='text/javascript' src='js/fuse.min.js')
 
 block content
     #island-wrapper
@@ -14,5 +15,5 @@ block content
                 |
                 | career options
             form#search
-                input(type='text' placeholder='Type keywords here')
+                input(type='text' name='search' id='search-input' placeholder='Type keywords here')
         script(type='text/javascript' src='js/main.js')

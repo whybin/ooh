@@ -134,6 +134,32 @@
         });
     };
 
+    const setupEventListeners = function () {
+        // {{{
+        const fuse = new Fuse(window.DB.occupations().get(), {
+            shouldSort: true,
+            location: 0,
+            distance: 5,
+            threshold: 0.7,
+            maxPatternLength: 32,
+            keys: [
+                { name: 'name', weight: 0.75 },
+                { name: 'brief', weight: 0.25 }
+            ]
+        });
+
+        const searchInput = document.querySelector('#search-input');
+        searchInput.addEventListener('input', throttle(function (e) {
+            const value = e.target.value;
+            if (value.length < 3) {
+                return;
+            }
+
+            console.log(fuse.search(value));
+        }, 300));
+    };
+    // }}}
+
     window.addEventListener('load', function () {
         window.DB = window.DB || {};
         if ('occupations' in window.DB === false) {
@@ -141,5 +167,6 @@
         }
 
         drawBrowseGraphs();
+        setupEventListeners();
     });
 })(this, document);
