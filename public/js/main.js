@@ -44,8 +44,19 @@
                         display: false
                     }]
                 },
+                elements: {
+                    point: { hoverRadius: 6 }
+                },
                 legend: { display: false },
+                layout: { padding: 5 },
                 tooltips: {
+                    mode: 'index',
+                    titleFontFamily: 'Seravek',
+                    bodyFontFamily: 'Seravek',
+                    titleFontSize: 16,
+                    bodyFontSize: 14,
+                    xPadding: 9,
+                    yPadding: 9,
                     callbacks: {
                         label: item => {
                             switch (item.datasetIndex) {

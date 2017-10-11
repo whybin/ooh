@@ -1,20 +1,22 @@
-$light-color-1: #fafafa;
-$light-color-2: #e5e5e5;
+$light-color-1: #f8f8f8;
+$light-color-2: #dde3ef;
 $dark-color-1: #424242;
 $blue-color-1: #64a3d2;
 $blue-color-2: #b3cee5;
+$blue-color-3: #3a5bba;
+$muted-color-1: #5b617b;
 
 body {
     margin: 0;
 
-    background: $light-color-1;
+    background: $blue-color-3;
     color: $dark-color-1;
 
     font-family: 'Seravek', sans-serif;
 }
 
 #island-wrapper {
-    width: 75%;
+    width: 85%;
     max-width: 75em;
 
     margin: auto;
@@ -23,14 +25,13 @@ body {
 #search-container {
     padding: 1em;
 
-    border-radius: 0 0 0.3em 0.3em;
+    border-radius: 0.3em;
 
-    background: $blue-color-1;
+    background: $light-color-2;
 
     #search-instruct {
         margin: 0 0 0.25em 0;
 
-        color: $light-color-1;
         font-size: 30px;
         font-weight: normal;
         letter-spacing: 0.3px;
@@ -41,7 +42,7 @@ body {
         box-sizing: border-box;
         padding: 0.5em;
 
-        border: 0;
+        border: 2px solid $blue-color-2;
         border-radius: 0.2em;
 
         background: $light-color-1;
