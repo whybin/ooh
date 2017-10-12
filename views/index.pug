@@ -14,6 +14,16 @@ block content
                 strong searching
                 |
                 | career options
-            form#search
-                input(type='text' name='search' id='search-input' placeholder='Type keywords here')
+            #search-form
+                form#search
+                    input(type='text' name='search' id='search-input' placeholder='Type keywords here')
+                    #form-more.hidden
+                        .form-row
+                            .input-container
+                                .input-wrapper
+                                    p Yearly Median Pay (2016)
+                                    input(type='range' name='median-pay-min'
+                                        class='median-pay')
+                                    input(type='range' name='median-pay-max'
+                                        class='median-pay superimposed')
         script(type='text/javascript' src='js/main.js')

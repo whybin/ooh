@@ -41,17 +41,64 @@ body {
         letter-spacing: 0.3px;
     }
 
-    #search input {
+    #search-form {
         width: 100%;
-        box-sizing: border-box;
-        padding: 0.5em;
 
         border: 2px solid $blue-color-2;
         border-radius: 0.2em;
 
         background: $light-color-1;
+        color: $blue-color-2;
+    }
+
+    input {
+        box-sizing: border-box;
+        padding: 0.5em;
+    }
+
+    input.superimposed {
+        position: absolute;
+        left: 0;
+    }
+
+    #search-input {
+        border: 0;
+        border-bottom: 2px solid $light-color-2;
+        width: 100%;
+
+        background: $light-color-1;
         color: $blue-color-1;
         font-size: 21px;
         letter-spacing: 0.3px;
+    }
+
+    .form-row {
+        display: flex;
+        
+        .input-container {
+            flex: 1 1 auto;
+
+            p {
+                margin: 0 0 0.5em 0;
+            }
+        }
+
+        .input-wrapper {
+            margin: 0.75em;
+            position: relative;
+        }
+    }
+
+    input[type='range'] {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+        // Disables clicking of track; allows superimposed range inputs
+        pointer-events: none;
+    }
+
+    input[type='range']::-moz-range-thumb {
+        pointer-events: auto;
     }
 }
