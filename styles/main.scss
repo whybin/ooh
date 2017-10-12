@@ -34,6 +34,7 @@ body {
 }
 
 #search-container {
+    margin-top: 1em;
     padding: 1em;
 
     border-radius: 0.3em;
@@ -122,6 +123,7 @@ form .tooltip {
     display: inline-block;
     position: absolute;
     top: 0;
+    z-index: 100;
 
     background: black;
     color: white;
