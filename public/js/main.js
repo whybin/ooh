@@ -21,6 +21,10 @@
     }
     // }}}
 
+    const minMax = function (min, max) {
+        return (min < max) ? { min: min, max: max } : { min: max, max: min };
+    };
+
     /**
      * Returns throttled input function.
      * @param {Function} func
@@ -324,18 +328,14 @@
         const filterSearch = throttle(function (thumb) {
             const classes = thumb.getAttribute('class');
             if (classes.indexOf('median-pay') > -1) {
-                let min = parseFloat(
+                const min = parseFloat(
                     document.querySelector('input[name="median-pay-min"]').value);
-                let max = parseFloat(
+                const max = parseFloat(
                     document.querySelector('input[name="median-pay-max"]').value);
 
-                if (min > max) {
-                    let temp = min;
-                    min = max;
-                    max = temp;
-                }
+                const mm = minMax(min, max);
 
-                search.filters.pay_per_year = { gte: min, lte: max };
+                search.filters.pay_per_year = { gte: mm.min, lte: mm.max };
             } else if (classes.indexOf('job-growth') > -1) {
             }
 
