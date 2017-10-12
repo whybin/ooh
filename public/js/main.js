@@ -180,9 +180,12 @@
     };
     // }}}
 
-    const setupEventListeners = function (graphs) {
-        // {{{
-        const fuse = new Fuse(window.DB.occupations().get(), {
+    const search = {
+        filters: {
+            pay_per_year: {}
+        },
+
+        fuseOptions: {
             shouldSort: true,
             tokenize: true,
             threshold: 0.2,
@@ -191,10 +194,38 @@
                 { name: 'name', weight: 0.75 },
                 { name: 'brief', weight: 0.25 }
             ]
-        });
+        },
 
+        searchInput: '',
+
+        searchFor: function (graphs, input = null) {
+            let dataSource = window.DB.occupations(search.filters).get();
+
+            if (input === null) {
+                input = search.searchInput;
+            } else {
+                search.searchInput = input;
+            }
+
+            if (input.length >= 3) {
+                const fuse = new Fuse(dataSource, search.fuseOptions);
+                dataSource = fuse.search(input);
+            }
+
+            const labels = [], datasets = [];
+            populateData(dataSource, labels, datasets);
+
+            graphs.data.labels = labels;
+            graphs.data.datasets = datasets;
+            graphs.update();
+        }
+    };
+
+    const setupEventListeners = function (graphs) {
+        // {{{
         const searchInput = document.querySelector('#search-input');
         searchInput.addEventListener('click', function () {
+            // {{{
             const moreElem = document.querySelector('#form-more');
             showElem(moreElem);
 
@@ -227,24 +258,16 @@
                     .setAttribute('value', maxPay);
             });
         });
+        // }}}
 
         searchInput.addEventListener('input', throttle(function (e) {
             // {{{
             const value = e.target.value;
-            const labels = [], datasets = [];
-
-            if (!value.length) {
-                populateData(window.DB.occupations().get(), labels, datasets);
-            } else if (value.length < 3) {
+            if (value.length && value.length < 3) {
                 return;
-            } else {
-                const searchResults = fuse.search(value);
-                populateData(searchResults, labels, datasets);
             }
 
-            graphs.data.labels = labels;
-            graphs.data.datasets = datasets;
-            graphs.update();
+            search.searchFor(graphs, value);
         }, 600));
         // }}}
 
@@ -280,10 +303,6 @@
         };
         // }}}
 
-        const filters = {
-            pay_per_year: {}
-        };
-
         const filterSearch = throttle(function (thumb) {
             const classes = thumb.getAttribute('class');
             if (classes.indexOf('median-pay') > -1) {
@@ -299,17 +318,11 @@
                     max = temp;
                 }
 
-                console.log(min,max);
-                filters.pay_per_year = { gte: min, lte: max };
+                search.filters.pay_per_year = { gte: min, lte: max };
             } else if (classes.indexOf('job-growth') > -1) {
             }
 
-            let labels = [], datasets = [];
-            populateData(window.DB.occupations(filters).get(), labels, datasets);
-
-            graphs.data.labels = labels;
-            graphs.data.datasets = datasets;
-            graphs.update();
+            search.searchFor(graphs);
         }, 800);
 
         const rangeThumbs =
