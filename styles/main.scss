@@ -5,6 +5,8 @@ $blue-color-1: #64a3d2;
 $blue-color-2: #b3cee5;
 $blue-color-3: #3a5bba;
 
+$dot-colors: (median-pay: #5ed7a3, total-jobs: #e96073, job-growth: #f08226);
+
 body {
     // {{{
     margin: 0;
@@ -101,5 +103,13 @@ body {
 
     input[type='range']::-moz-range-thumb {
         pointer-events: auto;
+    }
+
+    @each $filter, $color in $dot-colors {
+        input[type='range'].#{$filter}::-moz-range-thumb,
+        input[type='range'].#{$filter}::-moz-range-track {
+            background: $color;
+            border: 0;
+        }
     }
 }
