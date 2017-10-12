@@ -325,18 +325,24 @@
         };
         // }}}
 
+        const filterRange = function (filter, row) {
+            const min = parseFloat(
+                document.querySelector(`input[name="${filter}-min"]`).value);
+            const max = parseFloat(
+                document.querySelector(`input[name="${filter}-max"]`).value);
+            const mm = minMax(min, max);
+
+            search.filters[row] = { gte: mm.min, lte: mm.max };
+        };
+
         const filterSearch = throttle(function (thumb) {
             const classes = thumb.getAttribute('class');
             if (classes.indexOf('median-pay') > -1) {
-                const min = parseFloat(
-                    document.querySelector('input[name="median-pay-min"]').value);
-                const max = parseFloat(
-                    document.querySelector('input[name="median-pay-max"]').value);
-
-                const mm = minMax(min, max);
-
-                search.filters.pay_per_year = { gte: mm.min, lte: mm.max };
+                filterRange('median-pay', 'pay_per_year');
+            } else if (classes.indexOf('total-jobs') > -1) {
+                filterRange('total-jobs', 'total_jobs');
             } else if (classes.indexOf('job-growth') > -1) {
+                filterRange('job-growth', 'job_growth');
             }
 
             search.searchFor(graphs);
