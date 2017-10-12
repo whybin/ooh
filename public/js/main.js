@@ -193,6 +193,10 @@
         });
 
         const searchInput = document.querySelector('#search-input');
+        searchInput.addEventListener('click', function () {
+            showElem(document.querySelector('#form-more'));
+        });
+
         searchInput.addEventListener('input', throttle(function (e) {
             const value = e.target.value;
             const labels = [], datasets = [];
@@ -210,6 +214,49 @@
             graphs.data.datasets = datasets;
             graphs.update();
         }, 600));
+
+        // Handle tooltips {{{
+        const getTooltip = function (e) {
+            return e.target.parentNode.querySelector('.tooltip');
+        };
+
+        const updateTooltip = function (e, thumb) {
+            const tooltipElem = getTooltip(e);
+            const rect = thumb.getBoundingClientRect();
+            let xOffset = e.layerX - 10;
+
+            if (xOffset < 0) {
+                xOffset = 0;
+            }
+            if (xOffset > rect.width - 10) {
+                xOffset = rect.width - 10;
+            }
+
+            tooltipElem.setAttribute('style', `left: ${xOffset}px`);
+
+            const classes = thumb.getAttribute('class');
+            let text = thumb.value;
+            if (classes.indexOf('median-pay') > -1) {
+                text = '$' + parseFloat(text).toLocaleString();
+            } else if (classes.indexOf('job-growth') > -1) {
+                text += '%';
+            }
+
+            tooltipElem.innerText = text;
+            showElem(tooltipElem);
+        };
+        // }}}
+
+        const rangeThumbs =
+            document.querySelectorAll('input[type="range"]');
+        rangeThumbs.forEach(thumb => {
+            thumb.addEventListener('mousemove', e => updateTooltip(e, thumb));
+            thumb.addEventListener('mouseover', e => updateTooltip(e, thumb));
+
+            thumb.addEventListener('mouseout', e => {
+                hideElem(getTooltip(e));
+            });
+        });
     };
     // }}}
 
