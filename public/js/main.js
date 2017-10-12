@@ -175,13 +175,16 @@
         const searchInput = document.querySelector('#search-input');
         searchInput.addEventListener('input', throttle(function (e) {
             const value = e.target.value;
-            if (value.length < 3) {
-                return;
-            }
-
-            const searchResults = fuse.search(value);
             const labels = [], datasets = [];
-            populateData(searchResults, labels, datasets);
+
+            if (!value.length) {
+                populateData(window.DB.occupations().get(), labels, datasets);
+            } else if (value.length < 3) {
+                return;
+            } else {
+                const searchResults = fuse.search(value);
+                populateData(searchResults, labels, datasets);
+            }
 
             graphs.data.labels = labels;
             graphs.data.datasets = datasets;
