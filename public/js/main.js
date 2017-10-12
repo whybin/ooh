@@ -280,13 +280,54 @@
         };
         // }}}
 
+        const filters = {
+            pay_per_year: {}
+        };
+
+        const filterSearch = throttle(function (thumb) {
+            const classes = thumb.getAttribute('class');
+            if (classes.indexOf('median-pay') > -1) {
+                let min = parseFloat(
+                    document.querySelector('input[name="median-pay-min"]').value);
+                let max = parseFloat(
+                    document.querySelector('input[name="median-pay-max"]').value);
+
+                console.log(min,max);
+                if (min > max) {
+                    let temp = min;
+                    min = max;
+                    max = temp;
+                }
+
+                console.log(min,max);
+                filters.pay_per_year = { gte: min, lte: max };
+            } else if (classes.indexOf('job-growth') > -1) {
+            }
+
+            let labels = [], datasets = [];
+            populateData(window.DB.occupations(filters).get(), labels, datasets);
+
+            graphs.data.labels = labels;
+            graphs.data.datasets = datasets;
+            graphs.update();
+        }, 800);
+
         const rangeThumbs =
             document.querySelectorAll('input[type="range"]');
         rangeThumbs.forEach(thumb => {
-            thumb.addEventListener('mousemove', e => updateTooltip(e, thumb));
-            thumb.addEventListener('mouseover', e => updateTooltip(e, thumb));
+            const mousemoveFunc = function (e) {
+                updateTooltip(e, thumb);
+                filterSearch(thumb);
+            };
 
-            thumb.addEventListener('mouseout', e => {
+            thumb.addEventListener('mousedown', e => {
+                thumb.addEventListener('mousemove', mousemoveFunc);
+            });
+
+            thumb.addEventListener('mouseover', e => updateTooltip(e, thumb));
+            thumb.addEventListener('mouseout', e => hideElem(getTooltip(e)));
+            thumb.addEventListener('mouseup', e => {
+                thumb.removeEventListener('mousemove', mousemoveFunc);
                 hideElem(getTooltip(e));
             });
         });
