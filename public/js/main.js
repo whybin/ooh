@@ -1,4 +1,24 @@
 (function (window, document) {
+    // Element utilities {{{
+    /**
+     * Display element
+     * @param {HTMLElement} elem
+     */
+    const showElem = function (elem) {
+        const classes = elem.getAttribute('class');
+        elem.setAttribute('class', classes.replace(/ ?hidden/g, ''));
+    };
+
+    /**
+     * Hide element
+     * @param {HTMLElement} elem
+     */
+    const hideElem = function (elem) {
+        const classes = elem.getAttribute('class');
+        elem.setAttribute('class', classes + ' hidden');
+    }
+    // }}}
+
     /**
      * Returns throttled input function.
      * @param {Function} func

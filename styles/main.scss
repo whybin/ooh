@@ -22,6 +22,10 @@ body {
     cursor: pointer;
 }
 
+.hidden {
+    display: none !important;
+}
+
 #island-wrapper {
     width: 85%;
     max-width: 75em;
@@ -51,7 +55,7 @@ body {
         border-radius: 0.2em;
 
         background: $light-color-1;
-        color: $blue-color-2;
+        color: $blue-color-1;
     }
 
     input {
@@ -112,4 +116,19 @@ body {
             border: 0;
         }
     }
+}
+
+form .tooltip {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+
+    background: black;
+    color: white;
+    opacity: 0.85;
+
+    font-size: 12px;
+
+    border-radius: 0.5em;
+    padding: 0.5em;
 }
