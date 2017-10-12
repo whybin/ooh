@@ -198,6 +198,7 @@
         });
 
         searchInput.addEventListener('input', throttle(function (e) {
+            // {{{
             const value = e.target.value;
             const labels = [], datasets = [];
 
@@ -214,6 +215,7 @@
             graphs.data.datasets = datasets;
             graphs.update();
         }, 600));
+        // }}}
 
         // Handle tooltips {{{
         const getTooltip = function (e) {
