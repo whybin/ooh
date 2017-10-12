@@ -234,32 +234,47 @@
 
             // Add values to input ranges
             const db = window.DB.occupations();
-            moreElem.querySelectorAll('.median-pay').forEach(input => {
-                let minPay = db.min('pay_per_year');
-                const minEstimatedPay = db.min('pay_per_hour')
-                    * WORK_HOURS_PER_YEAR;
-                if (minEstimatedPay < minPay) {
-                    minPay = minEstimatedPay;
-                }
-                minPay = Math.floor(minPay / 1000) * 1000;
 
-                let maxPay = db.max('pay_per_year');
-                const maxEstimatedPay = db.max('pay_per_hour')
-                    * WORK_HOURS_PER_YEAR;
-                if (maxEstimatedPay > maxPay) {
-                    maxPay = maxEstimatedPay;
-                }
-                maxPay = Math.ceil(maxPay / 1000) * 1000;
+            const setupRangeInputs = function (classId, min, max, step) {
+                moreElem.querySelectorAll('input.' + classId).forEach(input => {
+                    input.setAttribute('min', min);
+                    input.setAttribute('max', max);
+                    input.setAttribute('step', step);
+                });
 
-                input.setAttribute('min', minPay);
-                input.setAttribute('max', maxPay);
-                input.setAttribute('step', 1000);
+                moreElem.querySelector(`input[name="${classId}-min"]`)
+                    .setAttribute('value', min);
+                moreElem.querySelector(`input[name="${classId}-max"]`)
+                    .setAttribute('value', max);
+            };
 
-                moreElem.querySelector('input[name="median-pay-min"]')
-                    .setAttribute('value', minPay);
-                moreElem.querySelector('input[name="median-pay-max"]')
-                    .setAttribute('value', maxPay);
-            });
+            // Median pay range {{{
+            let minPay = db.min('pay_per_year');
+            const minEstimatedPay = db.min('pay_per_hour')
+                * WORK_HOURS_PER_YEAR;
+            if (minEstimatedPay < minPay) {
+                minPay = minEstimatedPay;
+            }
+            minPay = Math.floor(minPay / 1000) * 1000;
+
+            let maxPay = db.max('pay_per_year');
+            const maxEstimatedPay = db.max('pay_per_hour')
+                * WORK_HOURS_PER_YEAR;
+            if (maxEstimatedPay > maxPay) {
+                maxPay = maxEstimatedPay;
+            }
+            maxPay = Math.ceil(maxPay / 1000) * 1000;
+
+            setupRangeInputs('median-pay', minPay, maxPay, 1000);
+            // }}}
+
+            const minJobs = Math.floor(db.min('total_jobs') / 1000) * 1000;
+            const maxJobs = Math.ceil(db.max('total_jobs') / 1000) * 1000;
+            setupRangeInputs('total-jobs', minJobs, maxJobs, 1000);
+
+            const minGrowth = db.min('job_growth');
+            const maxGrowth = db.max('job_growth');
+            setupRangeInputs('job-growth', minGrowth, maxGrowth, 1);
         });
         // }}}
 
