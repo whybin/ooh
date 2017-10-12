@@ -1,4 +1,6 @@
 (function (window, document) {
+    const WORK_HOURS_PER_YEAR = 2080;
+
     // Element utilities {{{
     /**
      * Display element
@@ -73,7 +75,6 @@
     const populateData = function (dataSource, labels, datasets) {
         // {{{
         let perYearData = [], totalJobsData = [], jobGrowthData = [];
-        const WORK_HOURS_PER_YEAR = 2080;
         dataSource.forEach(occ => {
             labels.push(occ.name);
 
@@ -194,7 +195,37 @@
 
         const searchInput = document.querySelector('#search-input');
         searchInput.addEventListener('click', function () {
-            showElem(document.querySelector('#form-more'));
+            const moreElem = document.querySelector('#form-more');
+            showElem(moreElem);
+
+            // Add values to input ranges
+            const db = window.DB.occupations();
+            moreElem.querySelectorAll('.median-pay').forEach(input => {
+                let minPay = db.min('pay_per_year');
+                const minEstimatedPay = db.min('pay_per_hour')
+                    * WORK_HOURS_PER_YEAR;
+                if (minEstimatedPay < minPay) {
+                    minPay = minEstimatedPay;
+                }
+                minPay = Math.floor(minPay / 1000) * 1000;
+
+                let maxPay = db.max('pay_per_year');
+                const maxEstimatedPay = db.max('pay_per_hour')
+                    * WORK_HOURS_PER_YEAR;
+                if (maxEstimatedPay > maxPay) {
+                    maxPay = maxEstimatedPay;
+                }
+                maxPay = Math.ceil(maxPay / 1000) * 1000;
+
+                input.setAttribute('min', minPay);
+                input.setAttribute('max', maxPay);
+                input.setAttribute('step', 1000);
+
+                moreElem.querySelector('input[name="median-pay-min"]')
+                    .setAttribute('value', minPay);
+                moreElem.querySelector('input[name="median-pay-max"]')
+                    .setAttribute('value', maxPay);
+            });
         });
 
         searchInput.addEventListener('input', throttle(function (e) {
