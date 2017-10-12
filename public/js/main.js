@@ -329,7 +329,6 @@
                 let max = parseFloat(
                     document.querySelector('input[name="median-pay-max"]').value);
 
-                console.log(min,max);
                 if (min > max) {
                     let temp = min;
                     min = max;
