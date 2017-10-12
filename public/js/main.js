@@ -227,6 +227,9 @@
         searchInput.addEventListener('click', function () {
             // {{{
             const moreElem = document.querySelector('#form-more');
+            if (moreElem.getAttribute('class').indexOf('hidden') === -1) {
+                return;
+            }
             showElem(moreElem);
 
             // Add values to input ranges
